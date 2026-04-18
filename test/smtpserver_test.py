@@ -9,6 +9,7 @@ import smtplib
 from unittest.mock import MagicMock, patch, call
 from twisted.internet import defer
 from twisted.mail import smtp as twisted_smtp
+from twisted.mail.smtp import Address, User
 
 # Ajustar path para importar desde smtp/
 import sys
@@ -180,12 +181,9 @@ class TestSMTPDelivery:
     """
     @note: Estos tests verifican que SMTPDelivery valida correctamente los remitentes y destinatarios, y que crea instancias de SMTPMessage para entregar los mensajes. No prueban la lógica de generación de nombres únicos ni la concurrencia, que podrían ser temas para tests adicionales.
     """
-    def _make_user(self, address: str):
-        """Crea un mock de twisted smtp.User con .dest como Address."""
-        user = MagicMock()
-        user.dest = MagicMock()
-        user.dest.__str__ = lambda _: address
-        return user
+    def _make_user(self, address_str):
+        addr = Address(address_str.encode())
+        return User(addr, None, None, addr)
 
     def test_validate_from_acepta_cualquier_remitente(self, delivery):
         origin = MagicMock()
@@ -284,11 +282,12 @@ class TestIntegracion:
 
     def test_correo_llega_al_storage(self, servidor_smtp):
         tmp_path, port = servidor_smtp
+        msg = "Subject: Integración\r\n\r\nHola desde smtplib".encode("utf-8")
         with smtplib.SMTP("localhost", port) as s:
             s.sendmail(
                 "remitente@externa.com",
                 "usuario@test.local",
-                "Subject: Integración\r\n\r\nHola desde smtplib"
+                msg
             )
         time.sleep(0.2)
         emls = list((tmp_path / "usuario").glob("*.eml"))
@@ -297,11 +296,12 @@ class TestIntegracion:
     def test_dominio_rechazado_lanza_excepcion(self, servidor_smtp):
         _, port = servidor_smtp
         with smtplib.SMTP("localhost", port, timeout=5) as s:  # timeout evita congelarse
+            msg = "Subject: Rechazado\r\n\r\nNo debería llegar".encode("utf-8")
             with pytest.raises(smtplib.SMTPRecipientsRefused):
                 s.sendmail(
                     "remitente@ext.com",
                     "usuario@dominio-invalido.com",
-                    "Subject: Rechazado\r\n\r\nNo debería llegar"
+                    msg
                 )
 
     def test_multiples_destinatarios_validos(self, servidor_smtp):
