@@ -1,0 +1,5 @@
+certs/server.key
+mail_storage/*
+*/__pycache__/*
+html/*
+latex/*

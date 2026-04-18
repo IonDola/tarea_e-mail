@@ -42,6 +42,7 @@ tarea_email/
 │   ├── xmpp_notifier.py    # Notificador XMPP
 ├── gui_main.py             # Inicializador de la Interfaz (opcional)
 ├── kick-off.pdf            # Pos el kickoff
+├── Doxyfile                # Configuración de documentación con Doxygen
 └── readme.md               # El presente documento
 ```
 
@@ -49,9 +50,16 @@ tarea_email/
 Dentro del ambiente de desarrollo "venv".
 
 ```bash
-pip install twisted slixmpp pyopenssl service_identity
+$ pip install twisted pyopenssl service_identity
 ```
-
+Si se desea usar la bateria de pruebas.
+```bash
+pip install pytest twisted pyopenssl
+```
+Si se desea usar Doxygen.
+```bash
+pip install doxypypy
+```
 ## Generar certificados SSL (autofirmados)
 
 ```bash
@@ -172,3 +180,4 @@ ls mail_storage/bob/
 - El SMTP server valida el dominio del destinatario; rechaza con `SMTPBadRcpt` si no coincide.
 - SSL/TLS usa certificados OpenSSL a través de `twisted.internet.ssl`.
 - El XMPP notifier corre en un hilo separado para no bloquear el reactor de Twisted.
+- En el .gitignore se omite la información producida por Doxygen, pues se considera redundante subirla al repositorio
