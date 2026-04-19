@@ -118,20 +118,22 @@ python pop3server.py -s ./mail_storage -p 9955 \
   --ssl --certfile certs/server.crt --keyfile certs/server.key
 ```
 
-**Usuarios** — editar `mail_storage/users.json`:
+**Usuarios** — en `mail_storage/users.json`:
 ```json
 {
   "alice": "password123",
-  "bob": "password456"
+  "bob": "secret"
 }
 ```
+**Inicio de Sesión de Ejemplo Basico**
+```bash
+telnet localhost 1100
+USER alice
+PASS password123
+LIST
+QUIT
 
-**Thunderbird** — configurar cuenta POP3:
-- Servidor: `localhost` (o tu dominio)
-- Puerto: `1100` (o `9955` con SSL)
-- Usuario: `alice`
-- Contraseña: `password123`
-- SSL: ninguno / SSL según configuración
+```
 
 ## XMPP Notifier
 
