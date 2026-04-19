@@ -1,0 +1,9 @@
+Subject: Hola {{nombre}}, bienvenido a {{empresa}}
+Attachment: templates/adjunto.pdf
+
+Estimado {{nombre}},
+
+Este es un correo de prueba enviado desde el cliente SMTP.
+Tu dirección registrada es {{email}} y pertenecés a {{empresa}}.
+
+Saludos.
