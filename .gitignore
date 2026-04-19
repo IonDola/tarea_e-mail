@@ -3,3 +3,4 @@ mail_storage/*
 */__pycache__/*
 html/*
 latex/*
+certs/server.crt

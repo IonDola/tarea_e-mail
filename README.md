@@ -66,18 +66,23 @@ pip install doxypypy
 openssl req -x509 -newkey rsa:2048 \
   -keyout certs/server.key \
   -out certs/server.crt \
-  -days 365 -nodes -subj "/CN=tudominio.com"
+  -days 365 -nodes \
+  -subj "/CN=localhost"
 ```
 
 ## SMTP Server
 
 ```bash
 # Sin SSL (desarrollo)
-python smtpserver.py -d localhost,tudominio.com -s ./mail_storage -p 2525
+python smtp/smtpserver.py -d local.dev -s mail_storage -p 2525
 
 # Con SSL
-python smtpserver.py -d tudominio.com -s ./mail_storage -p 465 \
-  --ssl --certfile certs/server.crt --keyfile certs/server.key
+python smtp/smtpserver.py \
+  -d local.dev \
+  -s mail_storage \
+  -p 2525 \
+  --cert certs/server.crt \
+  --key certs/server.key
 ```
 
 - `-d`: dominios aceptados (coma-separados)
@@ -87,15 +92,8 @@ python smtpserver.py -d tudominio.com -s ./mail_storage -p 465 \
 ## SMTP Client
 
 ```bash
-# Envío básico
-python smtpclient.py -H localhost:2525 -c destinatarios.csv -m mensaje.txt
-
-# Con remitente personalizado y adjunto
-python smtpclient.py -H localhost:2525 -c destinatarios.csv -m mensaje.txt \
-  --from yo@tudominio.com --attach archivo.pdf
-
-# Con SSL
-python smtpclient.py -H tudominio.com:465 -c destinatarios.csv -m mensaje.txt --ssl
+# Envio de las templates
+python smtp/smtpclient.py   -host localhost   -p 2525   -c templates/destinatarios.csv   -m templates/bienvenida.txt   -s noreply@local.dev
 ```
 
 **CSV formato:**

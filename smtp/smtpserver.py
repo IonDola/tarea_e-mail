@@ -28,7 +28,7 @@ class MaildirStorage:
         """
         @method _user_dir
             @param user: nombre de usuario (parte local del email).
-            @return: ruta al directorio del usuario.
+            @return: str: ruta al directorio del usuario.
 
             Devuelve (y crea si no existe) el directorio del usuario.
             Ej: 'alice' → 'mail_storage/alice/'.
@@ -43,7 +43,7 @@ class MaildirStorage:
             @param recipient: dirección de destino (ej: 'sarah@ejemplo.com').
             @param sender: dirección del remitente (ej: 'ion@correo.com').
             @param raw_message: contenido del correo en bytes (incluye headers).
-            @return: ruta al archivo .eml guardado.
+            @return: str: ruta al archivo .eml guardado.
 
             Persiste el mensaje.
             Retorna la ruta del archivo .eml guardado.
@@ -117,7 +117,7 @@ class SMTPMessage:
         """
         @method connectionLost
             Se llama si la conexión cae antes de finalizar el mensaje.
-             Descartamos lo acumulado.
+            Descartamos lo acumulado.
         """
         self.lines = []
 
