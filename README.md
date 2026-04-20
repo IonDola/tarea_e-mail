@@ -27,7 +27,7 @@ tarea_email/
 │   └── config.json         # Configuración del SMTP
 ├── templates/
 │   ├── destinatarios.csv   # Ejemplo de CSV
-│   └── mensaje.txt         # Plantilla de mensaje
+│   └── bienvenida.txt         # Plantilla de mensaje
 ├── test/                   # Pruebas
 │   ├── smtpserver_test.py
 │   ├── smtpclient_test.py
@@ -171,6 +171,21 @@ python smtpclient.py -H localhost:2525 -c destinatarios.csv -m mensaje.txt
 # Verificar correos guardados
 ls mail_storage/alice/
 ls mail_storage/bob/
+```
+## Bateria de Pruebas
+```bash
+python -m pytest test/smtpserver_test.py -v
+python -m pytest test/smtpclient_test.py -v
+python -m pytest test/pop3server_test.py -v
+python -m pytest test/xmpp_notifier_test.py -v
+```
+## Puntos Extra
+### Modo PGP
+#### Dependencias
+```bash
+pip install python-gnupg
+sudo apt install gnupg2
+
 ```
 
 ## Notas técnicas

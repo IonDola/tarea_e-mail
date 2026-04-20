@@ -1,9 +1,3 @@
-# user/pop3server.py
-"""
-Servidor POP3 usando Twisted.
-Uso: python user/pop3server.py -s <mail-storage> -p <puerto>
-"""
-
 import os
 import sys
 import json
