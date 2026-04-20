@@ -1,0 +1,10 @@
+{
+    "jid":              "bot@jabber.org",
+    "password":         "secreto",
+    "recipient_jid":    "alice@jabber.org",
+    "storage_path":     "mail_storage",
+    "mail_user":        "alice",
+    "host":             "jabber.org",
+    "port":             5222,
+    "interval_seconds": 30
+}
