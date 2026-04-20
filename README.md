@@ -179,6 +179,14 @@ python -m pytest test/smtpclient_test.py -v
 python -m pytest test/pop3server_test.py -v
 python -m pytest test/xmpp_notifier_test.py -v
 ```
+## Puntos Extra
+### Modo PGP
+#### Dependencias
+```bash
+pip install python-gnupg
+sudo apt install gnupg2
+
+```
 
 ## Notas técnicas
 
