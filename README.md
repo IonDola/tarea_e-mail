@@ -166,7 +166,7 @@ python smtpserver.py -d localhost -s ./mail_storage -p 2525
 python pop3server.py -s ./mail_storage -p 1100
 
 # Terminal 3: enviar correos masivos
-python smtpclient.py -H localhost:2525 -c destinatarios.csv -m mensaje.txt
+python smtpclient.py -host localhost:2525 -c destinatarios.csv -m mensaje.txt
 
 # Verificar correos guardados
 ls mail_storage/alice/
