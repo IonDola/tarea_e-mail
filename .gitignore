@@ -6,3 +6,8 @@ html/*
 latex/*
 certs/server.crt
 venv/*
+
+build/*
+pop3server.spec
+smtpclient.spec
+smtpserver.spec
