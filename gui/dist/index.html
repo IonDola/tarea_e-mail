@@ -1,0 +1,1082 @@
+<!-- gui/dist/index.html -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TEC Mail Client</title>
+    <script src="/eel.js"></script>
+    <style>
+        /* ── Reset & Variables ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2e3250;
+            --accent: #4f8ef7;
+            --accent2: #7c3aed;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warn: #f59e0b;
+            --text: #e2e8f0;
+            --text-dim: #64748b;
+            --radius: 10px;
+            --font: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Login ── */
+        #login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: radial-gradient(ellipse at 50% 40%, #1a1d4a 0%, var(--bg) 70%);
+        }
+
+        .login-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 48px 40px;
+            width: 360px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, .5);
+        }
+
+        .login-card h1 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-card p {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: .85rem;
+            margin-bottom: 32px;
+        }
+
+        /* ── Forms ── */
+        .field {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: .8rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            padding: 10px 14px;
+            font-size: .9rem;
+            font-family: var(--font);
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: .9rem;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all .2s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #3b6fd4);
+            color: #fff;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            opacity: .88;
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            opacity: .85;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .btn-warn {
+            background: var(--warn);
+            color: #000;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: .8rem;
+        }
+
+        .btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        /* ── App Shell ── */
+        #app {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            height: 52px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .topbar-brand {
+            font-weight: 700;
+            font-size: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-dim);
+            font-size: .85rem;
+        }
+
+        /* Layout principal */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 200px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 16px 12px;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            color: var(--text-dim);
+            font-size: .9rem;
+            transition: all .2s;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font);
+        }
+
+        .nav-item:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: var(--surface2);
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+        }
+
+        /* Contenido */
+        .content {
+            flex: 1;
+            overflow: auto;
+            padding: 24px;
+        }
+
+        /* ── Páginas ── */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ── Inbox ── */
+        .email-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .email-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            cursor: pointer;
+            transition: all .2s;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 4px;
+        }
+
+        .email-item:hover {
+            border-color: var(--accent);
+        }
+
+        .email-item.unread {
+            border-left: 3px solid var(--accent);
+        }
+
+        .email-from {
+            font-weight: 600;
+            font-size: .9rem;
+        }
+
+        .email-subject {
+            color: var(--text-dim);
+            font-size: .85rem;
+            margin-top: 2px;
+        }
+
+        .email-time {
+            color: var(--text-dim);
+            font-size: .75rem;
+            text-align: right;
+        }
+
+        /* Modal de correo */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            width: 680px;
+            max-height: 80vh;
+            overflow: auto;
+            padding: 28px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .modal-subject {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .modal-meta {
+            color: var(--text-dim);
+            font-size: .82rem;
+            margin-top: 4px;
+        }
+
+        .email-body {
+            background: var(--surface2);
+            border-radius: var(--radius);
+            padding: 16px;
+            font-size: .9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-top: 16px;
+        }
+
+        /* ── Compose ── */
+        .compose-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            max-width: 680px;
+        }
+
+        .pgp-options {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin: 12px 0;
+        }
+
+        .pgp-options label {
+            text-transform: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pgp-options input[type=checkbox] {
+            width: auto;
+        }
+
+        .compose-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        /* ── PGP Keys ── */
+        .keys-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .key-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .key-info {
+            flex: 1;
+        }
+
+        .key-uid {
+            font-weight: 500;
+            font-size: .9rem;
+        }
+
+        .key-fp {
+            color: var(--text-dim);
+            font-size: .75rem;
+            font-family: monospace;
+            margin-top: 2px;
+        }
+
+        .key-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ── Config ── */
+        .config-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            max-width: 480px;
+        }
+
+        /* ── Utilidades ── */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: .72rem;
+            font-weight: 600;
+        }
+
+        .badge-blue {
+            background: rgba(79, 142, 247, .15);
+            color: var(--accent);
+        }
+
+        .badge-green {
+            background: rgba(34, 197, 94, .15);
+            color: var(--success);
+        }
+
+        .badge-red {
+            background: rgba(239, 68, 68, .15);
+            color: var(--danger);
+        }
+
+        .alert {
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            font-size: .85rem;
+            margin-bottom: 14px;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, .1);
+            border: 1px solid rgba(239, 68, 68, .3);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, .1);
+            border: 1px solid rgba(34, 197, 94, .3);
+            color: #86efac;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 20px 0;
+        }
+
+        .loading {
+            color: var(--text-dim);
+            font-size: .9rem;
+            padding: 20px 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-dim);
+            padding: 60px 0;
+            font-size: .9rem;
+        }
+
+        .empty-state .icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        /* ── Importar llave ── */
+        .import-area {
+            background: var(--surface2);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        /* Bulk sender */
+        .bulk-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            max-width: 680px;
+            margin-top: 20px;
+        }
+
+        .bulk-card h3 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══════════════ LOGIN ══════════════ -->
+    <div id="login-screen">
+        <div class="login-card">
+            <h1>✉ TEC Mail</h1>
+            <p>Ingresá tus credenciales para continuar</p>
+            <div id="login-alert"></div>
+            <div class="field">
+                <label>Usuario</label>
+                <input type="text" id="inp-user" placeholder="alice" autocomplete="username" />
+            </div>
+            <div class="field">
+                <label>Contraseña</label>
+                <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+            <button class="btn btn-primary" onclick="doLogin()">Iniciar sesión</button>
+        </div>
+    </div>
+
+    <!-- ══════════════ APP ══════════════ -->
+    <div id="app">
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <span class="topbar-brand">✉ TEC Mail Client</span>
+            <div class="topbar-user">
+                <span id="topbar-username"></span>
+                <button class="btn btn-ghost btn-sm" onclick="doLogout()">Salir</button>
+            </div>
+        </div>
+
+        <!-- Layout -->
+        <div class="main-layout">
+
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <button class="nav-item active" onclick="showPage('inbox', this)">
+                    <span class="nav-icon">📥</span> Bandeja
+                </button>
+                <button class="nav-item" onclick="showPage('compose', this)">
+                    <span class="nav-icon">✏️</span> Redactar
+                </button>
+                <button class="nav-item" onclick="showPage('config', this)">
+                    <span class="nav-icon">⚙️</span> Configuración
+                </button>
+            </nav>
+
+            <!-- Contenido -->
+            <main class="content">
+
+                <!-- ── Bandeja ── -->
+                <div class="page active" id="page-inbox">
+                    <div class="page-title">
+                        📥 Bandeja de entrada
+                        <button class="btn btn-ghost btn-sm" onclick="loadInbox()">↻ Actualizar</button>
+                    </div>
+                    <div id="inbox-alert"></div>
+                    <div id="email-list" class="email-list">
+                        <div class="loading">Cargando correos...</div>
+                    </div>
+                </div>
+
+                <!-- ── Redactar ── -->
+                <div class="page" id="page-compose">
+                    <div class="page-title">✏️ Redactar correo</div>
+                    <div class="compose-card">
+                        <div id="compose-alert"></div>
+                        <div class="field">
+                            <label>Para</label>
+                            <input type="email" id="cmp-to" placeholder="destinatario@dominio.com" />
+                        </div>
+                        <div class="field">
+                            <label>Asunto</label>
+                            <input type="text" id="cmp-subject" placeholder="Asunto del correo" />
+                        </div>
+                        <div class="field">
+                            <label>Mensaje</label>
+                            <textarea id="cmp-body" rows="8" placeholder="Escribí tu mensaje aquí..."></textarea>
+                        </div>
+
+                        <div class="compose-actions">
+                            <button class="btn btn-primary" onclick="doSend()">📤 Enviar</button>
+                            <button class="btn btn-ghost" onclick="clearCompose()">Limpiar</button>
+                        </div>
+                    </div>
+
+                    <!-- Envío masivo -->
+                    <div class="bulk-card">
+                        <h3>📋 Envío masivo (CSV)</h3>
+                        <div id="bulk-alert"></div>
+                        <div class="field">
+                            <label>Ruta del CSV</label>
+                            <input type="text" id="bulk-csv" placeholder="templates/destinatarios.csv" />
+                        </div>
+                        <div class="field">
+                            <label>Ruta de la plantilla</label>
+                            <input type="text" id="bulk-msg" placeholder="templates/mensaje.txt" />
+                        </div>
+                        <button class="btn btn-warn" onclick="doBulk()">📤 Enviar masivo</button>
+                    </div>
+                </div>
+
+                <!-- ── Config ── -->
+                <div class="page" id="page-config">
+                    <div class="page-title">⚙️ Configuración SMTP</div>
+                    <div class="config-card">
+                        <div id="config-alert"></div>
+                        <div class="field">
+                            <label>Servidor SMTP</label>
+                            <input type="text" id="cfg-host" placeholder="localhost" />
+                        </div>
+                        <div class="field">
+                            <label>Puerto</label>
+                            <input type="number" id="cfg-port" value="2525" />
+                        </div>
+                        <div class="field">
+                            <label>
+                                <input type="checkbox" id="cfg-tls" style="width:auto; margin-right:8px;" />
+                                Usar STARTTLS
+                            </label>
+                        </div>
+                        <button class="btn btn-primary" onclick="doSaveConfig()" style="width:auto;">
+                            💾 Guardar configuración
+                        </button>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de correo -->
+    <div class="modal-overlay" id="email-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-subject" id="modal-subject"></div>
+                    <div class="modal-meta" id="modal-meta"></div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-danger btn-sm" id="modal-delete-btn">🗑 Eliminar</button>
+                    <button class="btn btn-ghost  btn-sm" onclick="closeModal()">✕</button>
+                </div>
+            </div>
+
+            <div class="email-body" id="modal-body"></div>
+        </div>
+    </div>
+
+
+    <script>
+        // ═══════════════════════════════════════════════════════
+        // Estado global
+        // ═══════════════════════════════════════════════════════
+        let currentEmailId = null
+
+        // ═══════════════════════════════════════════════════════
+        // Utilidades UI
+        // ═══════════════════════════════════════════════════════
+
+        function showAlert(containerId, msg, type = 'error') {
+            const el = document.getElementById(containerId)
+            el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`
+            setTimeout(() => { el.innerHTML = '' }, 4000)
+        }
+
+        function showPage(name, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+            document.getElementById(`page-${name}`).classList.add('active')
+            btn.classList.add('active')
+
+            if (name === 'inbox') loadInbox()
+            if (name === 'pgp') loadKeys()
+            if (name === 'config') loadConfig()
+        }
+
+        function openModal() {
+            document.getElementById('email-modal').classList.add('open')
+        }
+
+        function closeModal() {
+            document.getElementById('email-modal').classList.remove('open')
+            currentEmailId = null
+        }
+
+        // Cerrar modal al clickear overlay
+        document.getElementById('email-modal').addEventListener('click', e => {
+            if (e.target === e.currentTarget) closeModal()
+        })
+
+        // ═══════════════════════════════════════════════════════
+        // Autenticación
+        // ═══════════════════════════════════════════════════════
+
+        async function doLogin() {
+            const user = document.getElementById('inp-user').value.trim()
+            const pass = document.getElementById('inp-pass').value
+
+            if (!user || !pass) {
+                showAlert('login-alert', 'Completá usuario y contraseña')
+                return
+            }
+
+            const res = await eel.login(user, pass)()
+            if (!res.ok) {
+                showAlert('login-alert', res.error)
+                return
+            }
+
+            document.getElementById('login-screen').style.display = 'none'
+            document.getElementById('app').style.display = 'flex'
+            document.getElementById('topbar-username').textContent = `👤 ${res.username}`
+            loadInbox()
+        }
+
+        async function doLogout() {
+            await eel.logout()()
+            document.getElementById('app').style.display = 'none'
+            document.getElementById('login-screen').style.display = 'flex'
+            document.getElementById('inp-pass').value = ''
+        }
+
+        // Enter en login
+        document.getElementById('inp-pass').addEventListener('keydown', e => {
+            if (e.key === 'Enter') doLogin()
+        })
+
+        // ═══════════════════════════════════════════════════════
+        // Bandeja de entrada
+        // ═══════════════════════════════════════════════════════
+
+        async function loadInbox() {
+            const list = document.getElementById('email-list')
+            list.innerHTML = '<div class="loading">Cargando correos...</div>'
+
+            const res = await eel.get_inbox()()
+            if (!res.ok) {
+                list.innerHTML = `<div class="alert alert-error">${res.error}</div>`
+                return
+            }
+
+            if (!res.emails.length) {
+                list.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        Tu bandeja está vacía
+      </div>`
+                return
+            }
+
+            list.innerHTML = res.emails.map(email => `
+    <div class="email-item ${email.read ? '' : 'unread'}"
+         onclick="openEmail('${email.id}')">
+      <div>
+        <div class="email-from">${escHtml(email.from || 'Desconocido')}</div>
+        <div class="email-subject">
+          ${email.read ? '' : '<span class="badge badge-blue">Nuevo</span> '}
+          ${escHtml(email.subject || '(sin asunto)')}
+        </div>
+      </div>
+      <div class="email-time">${escHtml(email.timestamp || '')}</div>
+    </div>
+  `).join('')
+        }
+   async function openEmail(emailId) {
+        currentEmailId = emailId
+        const res = await eel.get_email(emailId)()
+        if (!res.ok) return
+
+        const meta = res.meta
+        const body = res.raw || ''
+
+        document.getElementById('modal-subject').textContent =
+            meta.subject || '(sin asunto)'
+
+        document.getElementById('modal-meta').innerHTML =
+            `<b>De:</b> ${escHtml(meta.from || '')} &nbsp;|&nbsp; ` +
+            `<b>Para:</b> ${escHtml(meta.to || '')} &nbsp;|&nbsp; ` +
+            `${escHtml(meta.timestamp || '')}`
+
+        document.getElementById('modal-body').textContent = body
+        document.getElementById('modal-delete-btn').onclick =
+            () => deleteEmail(emailId)
+
+        openModal()
+        loadInbox()
+    }
+        async function doDecryptEmail() {
+            if (!currentEmailId) return
+            const pass = document.getElementById('modal-passphrase').value
+            const res = await eel.pgp_decrypt_email(currentEmailId, pass)()
+
+            if (!res.ok) {
+                document.getElementById('modal-body').textContent =
+                    `❌ Error al descifrar: ${res.error}`
+                return
+            }
+            document.getElementById('modal-body').textContent = res.body
+            document.getElementById('pgp-decrypt-section').style.display = 'none'
+        }
+
+        async function deleteEmail(emailId) {
+            await eel.delete_email(emailId)()
+            closeModal()
+            loadInbox()
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // Redactar
+        // ═══════════════════════════════════════════════════════
+        async function doSend() {
+            const to = document.getElementById('cmp-to').value.trim()
+            const subject = document.getElementById('cmp-subject').value.trim()
+            const body = document.getElementById('cmp-body').value.trim()
+
+            if (!to || !subject || !body) {
+                showAlert('compose-alert', 'Completá todos los campos obligatorios')
+                return
+            }
+
+            const res = await eel.send_email(to, subject, body)()
+            if (!res.ok) {
+                showAlert('compose-alert', `Error: ${res.error}`)
+                return
+            }
+            showAlert('compose-alert', '✅ Correo enviado correctamente', 'success')
+            clearCompose()
+        }
+        function clearCompose() {
+            ['cmp-to', 'cmp-subject', 'cmp-body'].forEach(id => {
+                document.getElementById(id).value = ''
+            })
+        }
+
+        async function doBulk() {
+            const csv = document.getElementById('bulk-csv').value.trim()
+            const msg = document.getElementById('bulk-msg').value.trim()
+
+            if (!csv || !msg) {
+                showAlert('bulk-alert', 'Completá la ruta del CSV y la plantilla')
+                return
+            }
+
+            const res = await eel.send_bulk(csv, msg)()
+            if (!res.ok) {
+                showAlert('bulk-alert', `Error: ${res.error}`)
+                return
+            }
+
+            const s = res.summary
+            showAlert(
+                'bulk-alert',
+                `✅ Enviados: ${s.ok.length} | ❌ Fallidos: ${s.failed.length}`,
+                s.failed.length ? 'error' : 'success'
+            )
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // PGP
+        // ═══════════════════════════════════════════════════════
+
+        async function loadKeys() {
+            const container = document.getElementById('keys-list')
+            container.innerHTML = '<div class="loading">Cargando llaves...</div>'
+
+            const res = await eel.pgp_list_keys()()
+            if (!res.ok || !res.keys.length) {
+                container.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🔑</div>
+        No hay llaves en el keyring
+      </div>`
+                return
+            }
+
+            container.innerHTML = res.keys.map(key => `
+    <div class="key-card">
+      <div class="key-info">
+        <div class="key-uid">${escHtml(key.uids.join(', '))}</div>
+        <div class="key-fp">${escHtml(key.fingerprint)}</div>
+        ${key.expires ? `<span class="badge badge-blue">Expira: ${key.expires}</span>` : ''}
+      </div>
+      <div class="key-actions">
+        <button class="btn btn-ghost btn-sm"
+          onclick="doExportKey('${escHtml(key.uids[0] || '')}')">
+          📤 Exportar
+        </button>
+        <button class="btn btn-danger btn-sm"
+          onclick="doDeleteKey('${escHtml(key.fingerprint)}')">
+          🗑
+        </button>
+      </div>
+    </div>
+  `).join('')
+        }
+
+        async function doGenerateKey() {
+            const name = document.getElementById('pgp-name').value.trim()
+            const email = document.getElementById('pgp-email').value.trim()
+            const passphrase = document.getElementById('pgp-passphrase').value
+
+            if (!name || !email) {
+                showAlert('pgp-gen-alert', 'Completá nombre y email')
+                return
+            }
+
+            showAlert('pgp-gen-alert', '⏳ Generando llave, puede tardar unos segundos...', 'success')
+            const res = await eel.pgp_generate_key(name, email, passphrase)()
+
+            if (!res.ok) {
+                showAlert('pgp-gen-alert', `Error: ${res.error}`)
+                return
+            }
+
+            showAlert('pgp-gen-alert', `✅ Llave generada: ${res.fingerprint}`, 'success')
+            document.getElementById('pgp-name').value = ''
+            document.getElementById('pgp-email').value = ''
+            document.getElementById('pgp-passphrase').value = ''
+            loadKeys()
+        }
+
+        async function doImportKey() {
+            const text = document.getElementById('pgp-import-text').value.trim()
+            if (!text) {
+                showAlert('pgp-import-alert', 'Pegá la llave ASCII armored')
+                return
+            }
+
+            const res = await eel.pgp_import_key(text)()
+            if (!res.ok) {
+                showAlert('pgp-import-alert', `Error: ${res.error}`)
+                return
+            }
+
+            showAlert('pgp-import-alert', `✅ Llave importada`, 'success')
+            document.getElementById('pgp-import-text').value = ''
+            loadKeys()
+        }
+
+        async function doExportKey(uid) {
+            const res = await eel.pgp_export_key(uid)()
+            if (!res.ok) { alert(`Error: ${res.error}`); return }
+
+            // Copiar al clipboard
+            await navigator.clipboard.writeText(res.key)
+            alert('✅ Llave pública copiada al portapapeles')
+        }
+
+        async function doDeleteKey(fingerprint) {
+            if (!confirm('¿Eliminás esta llave? Esta acción no se puede deshacer.')) return
+            const res = await eel.pgp_delete_key(fingerprint)()
+            if (!res.ok) { alert(`Error: ${res.error}`); return }
+            loadKeys()
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // Configuración
+        // ═══════════════════════════════════════════════════════
+
+        async function loadConfig() {
+            const res = await eel.get_smtp_config()()
+            if (!res.ok) return
+            document.getElementById('cfg-host').value = res.host
+            document.getElementById('cfg-port').value = res.port
+            document.getElementById('cfg-tls').checked = res.tls
+        }
+
+        async function doSaveConfig() {
+            const host = document.getElementById('cfg-host').value.trim()
+            const port = parseInt(document.getElementById('cfg-port').value)
+            const tls = document.getElementById('cfg-tls').checked
+
+            if (!host || !port) {
+                showAlert('config-alert', 'Completá host y puerto')
+                return
+            }
+
+            const res = await eel.save_smtp_config(host, port, tls)()
+            if (!res.ok) {
+                showAlert('config-alert', `Error: ${res.error}`)
+                return
+            }
+            showAlert('config-alert', '✅ Configuración guardada', 'success')
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // Helpers
+        // ═══════════════════════════════════════════════════════
+
+        function escHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+        }
+
+        // Verificar sesión al cargar
+        window.addEventListener('load', async () => {
+            const res = await eel.get_session()()
+            if (res.logged_in) {
+                document.getElementById('login-screen').style.display = 'none'
+                document.getElementById('app').style.display = 'flex'
+                document.getElementById('topbar-username').textContent = `👤 ${res.username}`
+                loadInbox()
+            }
+        })
+    </script>
+</body>
+
+</html>

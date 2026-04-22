@@ -8,17 +8,13 @@ tarea_email/
 │   ├── server.crt          # Certificado SSL (autofirmado)
 │   └── server.key          # Llave privada SSL
 ├── gui/                    # Interfaz Grafica (opcional)
-│   ├── src/
-│   │   ├── components/     # Componentes de la paginas
-│   │   ├── styles/         # Estilos css de la paginas
-│   │   └── pages/          # Paginas del "correo"
-│   ├── public/             # Iconografia
 │   ├── dist/               # Compilado de la interfaz con Eel
+│   │   └── index.html      # Paginas del correo
 │   └── package.json
 ├── mail_storage/
 │   ├── users.json          # Usuarios POP3 (user:password)
 │   └── <usuario>/          # Correos de cada usuario (.eml + .json)
-├── security/               # Cifrado (opcional)
+├── security/               # Cifrado (Opcional Descartado)
 │   ├── pgp_handler.py      # Logica de cifrado
 │   └── keys/               # Almacén de llaves PGP
 ├── smtp/
@@ -180,13 +176,18 @@ python -m pytest test/pop3server_test.py -v
 python -m pytest test/xmpp_notifier_test.py -v
 ```
 ## Puntos Extra
-### Modo PGP
+### ~~Modo PGP~~ **Descartado**
+
+### GUI
 #### Dependencias
 ```bash
-pip install python-gnupg
-sudo apt install gnupg2
-
+pip install eel
 ```
+#### Inicializar GUI
+```bash
+python gui_main.py
+```
+
 
 ## Notas técnicas
 
@@ -195,4 +196,5 @@ sudo apt install gnupg2
 - El SMTP server valida el dominio del destinatario; rechaza con `SMTPBadRcpt` si no coincide.
 - SSL/TLS usa certificados OpenSSL a través de `twisted.internet.ssl`.
 - El XMPP notifier corre en un hilo separado para no bloquear el reactor de Twisted.
-- En el .gitignore se omite la información producida por Doxygen, pues se considera redundante subirla al repositorio
+- En el .gitignore se omite la información producida por Doxygen, pues se considera redundante subirla al repositorio.
+- Me quede esperando a que git me autorizara la vara del dominio (no se logro a tiempo).

@@ -1,6 +1,8 @@
 certs/server.key
 mail_storage/*
+!mail_storage/users.json
 */__pycache__/*
 html/*
 latex/*
 certs/server.crt
+venv/*
